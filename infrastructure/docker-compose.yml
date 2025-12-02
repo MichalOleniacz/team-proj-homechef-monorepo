@@ -1,0 +1,90 @@
+
+services:
+  homechef-ops-grafana:
+    image: grafana/grafana:latest
+    container_name: homechef-ops-grafana
+    restart: unless-stopped
+    ports:
+      - '9990:3000'
+    volumes:
+      - './config/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro'
+      - './config/grafana/provisioning/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro'
+      - './config/grafana/dashboards:/etc/grafana/dashboards:ro'
+      - './data/grafana-storage:/var/lib/grafana'
+    networks: ['homechef-ops-monitoring', 'homechef-ops-logging']
+    labels:
+      - loki_scope=infra
+  homechef-ops-loki:
+    image: grafana/loki:latest
+    container_name: homechef-ops-loki
+    ports:
+      - "9993:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks: ['homechef-ops-logging']
+    labels:
+      - loki_scope=infra
+  homechef-ops-promtail:
+    image: grafana/promtail:latest
+    container_name: homechef-ops-loki-promtail
+    volumes:
+      - './config/promtail/promtail-config.yml:/etc/promtail/promtail-config.yml:ro'
+      - '/var/lib/docker/containers:/var/lib/docker/containers:ro'
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - '/var/log:/var/log:ro'
+    command: -config.file=/etc/promtail/promtail-config.yml
+    networks: ['homechef-ops-logging']
+    labels:
+      - loki_scope=infra
+  homechef-ops-prom-prometheus:
+    image: prom/prometheus:latest
+    container_name: homechef-ops-prometheus
+    restart: unless-stopped
+    ports:
+      - '9991:9090'
+    volumes:
+      - './config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml'
+      - './data/prometheus:/prometheus'
+    networks: ['homechef-ops-monitoring']
+    labels:
+      - loki_scope=infra
+  homechef-ops-prom-node-exporter:
+    image: prom/node-exporter:latest
+    container_name: homechef-ops-prometheus-node-exporter
+    volumes:
+      - '/proc:/host/proc:ro'
+      - '/sys:/host/sys:ro'
+      - '/:/rootfs:ro'
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    ports:
+      - '9992:9100'
+    networks: ['homechef-ops-monitoring']
+    labels:
+      - loki_scope=infra
+
+  homechef-log-tester:
+    image: alpine:3.20
+    container_name: homechef-ops-log-tester
+    command: >
+      sh -c '
+        i=0;
+        while true; do
+          echo "$(date -Iseconds) level=INFO service=log-tester msg=\"hello from log-tester\" count=$i";
+          i=$((i+1));
+          sleep 2;
+        done
+      '
+    restart: unless-stopped
+    networks: ['homechef-ops-logging']
+    labels:
+      - loki_scope=infra
+
+
+networks:
+  homechef-ops-monitoring:
+    driver: bridge
+  homechef-ops-logging:
+    driver: bridge
