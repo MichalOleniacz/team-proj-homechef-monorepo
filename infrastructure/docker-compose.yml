@@ -11,18 +11,22 @@ services:
       - './config/grafana/provisioning/dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:ro'
       - './config/grafana/dashboards:/etc/grafana/dashboards:ro'
       - './data/grafana-storage:/var/lib/grafana'
-    networks: ['homechef-ops-monitoring', 'homechef-ops-logging']
+    networks: [ 'homechef-net' ]
     labels:
       - loki_scope=infra
+    profiles: [ 'ops', 'full' ]
+
   homechef-ops-loki:
     image: grafana/loki:latest
     container_name: homechef-ops-loki
     ports:
       - "9993:3100"
     command: -config.file=/etc/loki/local-config.yaml
-    networks: ['homechef-ops-logging']
+    networks: [ 'homechef-net' ]
     labels:
       - loki_scope=infra
+    profiles: [ 'ops', 'full' ]
+
   homechef-ops-promtail:
     image: grafana/promtail:latest
     container_name: homechef-ops-loki-promtail
@@ -32,9 +36,11 @@ services:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
       - '/var/log:/var/log:ro'
     command: -config.file=/etc/promtail/promtail-config.yml
-    networks: ['homechef-ops-logging']
+    networks: [ 'homechef-net' ]
     labels:
       - loki_scope=infra
+    profiles: [ 'ops', 'full' ]
+
   homechef-ops-prom-prometheus:
     image: prom/prometheus:latest
     container_name: homechef-ops-prometheus
@@ -44,9 +50,11 @@ services:
     volumes:
       - './config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml'
       - './data/prometheus:/prometheus'
-    networks: ['homechef-ops-monitoring']
+    networks: [ 'homechef-net' ]
     labels:
       - loki_scope=infra
+    profiles: [ 'ops', 'full' ]
+
   homechef-ops-prom-node-exporter:
     image: prom/node-exporter:latest
     container_name: homechef-ops-prometheus-node-exporter
@@ -61,9 +69,10 @@ services:
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
     ports:
       - '9992:9100'
-    networks: ['homechef-ops-monitoring']
+    networks: [ 'homechef-net' ]
     labels:
       - loki_scope=infra
+    profiles: [ 'ops', 'full' ]
 
   homechef-log-tester:
     image: alpine:3.20
@@ -78,13 +87,83 @@ services:
         done
       '
     restart: unless-stopped
-    networks: ['homechef-ops-logging']
+    networks: [ 'homechef-net' ]
     labels:
       - loki_scope=infra
+    profiles: [ 'ops', 'full' ]
 
+  homechef-datastore-core:
+    container_name: homechef-datastore-core
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: core
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+      - ./config/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks: [ 'homechef-net' ]
+    ports:
+      - "5432:5432"
+    labels:
+      - loki_scope=app
+    profiles: [ 'db', 'full', 'app' ]
+
+  homechef-datastore-core-exporter:
+    container_name: homechef-datastore-core-exporter
+    image: prometheuscommunity/postgres-exporter:latest
+    restart: unless-stopped
+    environment:
+      DATA_SOURCE_NAME: "postgresql://postgres:postgres@homechef-datastore-core:5432/core?sslmode=disable"
+    ports:
+      - "9187:9187"
+    networks: [ 'homechef-net' ]
+    labels:
+      - loki_scope=infra
+    depends_on:
+      homechef-datastore-core:
+        condition: service_healthy
+    profiles: [ 'db', 'full', 'app' ]
+
+  homechef-cache-core:
+    container_name: homechef-cache-core
+    image: redis:7
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    ports:
+      - "6379:6379"
+    networks: [ 'homechef-net' ]
+    labels:
+      - loki_scope=app
+    profiles: [ 'db', 'full', 'app' ]
+
+  homechef-cache-core-exporter:
+    container_name: homechef-cache-core-exporter
+    image: oliver006/redis_exporter:latest
+    restart: unless-stopped
+    environment:
+      REDIS_ADDR: "redis://homechef-cache-core:6379"
+    ports:
+      - "9121:9121"
+    networks: [ 'homechef-net' ]
+    labels:
+      - loki_scope=infra
+    depends_on:
+      homechef-cache-core:
+        condition: service_healthy
+    profiles: [ 'db', 'full', 'app' ]
 
 networks:
-  homechef-ops-monitoring:
+  homechef-net:
     driver: bridge
-  homechef-ops-logging:
-    driver: bridge
+

@@ -1,0 +1,2 @@
+-- Schema is managed by Flyway migrations
+-- See core/src/main/resources/db/migration/
