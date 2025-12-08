@@ -10,4 +10,17 @@ scrape_configs:
     static_configs:
       - targets:
           - homechef-ops-prometheus-node-exporter:9100
+  - job_name: homechef-core
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets:
+          - host.docker.internal:8000
+  - job_name: postgres
+    static_configs:
+      - targets:
+          - homechef-datastore-core-exporter:9187
+  - job_name: redis
+    static_configs:
+      - targets:
+          - homechef-cache-core-exporter:9121
 
