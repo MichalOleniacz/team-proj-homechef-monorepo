@@ -36,74 +36,27 @@ We adopt **Hexagonal Architecture** (Ports & Adapters) combined with **Domain-Dr
 org.homechef.core
 │
 ├── domain/                          # Pure business logic, no framework deps
-│   ├── recipe/
-│   │   ├── Recipe.java              # Aggregate root
-│   │   ├── Ingredient.java          # Entity within aggregate
-│   │   ├── ParseRequest.java        # Entity
-│   │   ├── ParseStatus.java         # Enum
-│   │   ├── UrlHash.java             # Value Object
-│   │   └── RecipeRepository.java    # Repository interface (driven port)
-│   │
+│   ├── recipe/                      # Aggregates, entities, value objects
 │   ├── shoppinglist/                # Future: Phase 3
-│   │   └── ...
-│   │
 │   └── shared/                      # Cross-cutting domain concepts
-│       ├── DomainEvent.java         # Marker interface
-│       └── AggregateRoot.java       # Base class
 │
 ├── application/                     # Use cases, orchestration
 │   ├── port/
-│   │   ├── in/                      # Driving ports (use cases)
-│   │   │   ├── ParseRecipeUseCase.java
-│   │   │   ├── GetParseStatusUseCase.java
+│   │   ├── in/                      # Driving ports (use case interfaces)
 │   │   │   └── dto/                 # Command/Query objects
-│   │   │       ├── ParseRecipeCommand.java
-│   │   │       └── ParseStatusResponse.java
-│   │   │
-│   │   └── out/                     # Driven ports (infrastructure interfaces)
-│   │       ├── RecipeRepository.java      # Could also live in domain
-│   │       ├── RecipeCachePort.java
-│   │       ├── RecipeParseRequestPort.java
-│   │       └── EventPublisherPort.java
-│   │
+│   │   └── out/                     # Driven ports (repository interfaces)
 │   └── service/                     # Use case implementations
-│       ├── ParseRecipeService.java
-│       └── GetParseStatusService.java
 │
 ├── adapter/                         # Infrastructure implementations
 │   ├── in/                          # Driving adapters (receive requests)
-│   │   ├── web/
-│   │   │   ├── RecipeController.java
-│   │   │   ├── dto/                 # REST-specific DTOs
-│   │   │   │   ├── ParseRecipeRequest.java
-│   │   │   │   └── ParseRecipeResponse.java
-│   │   │   └── mapper/
-│   │   │       └── RecipeWebMapper.java
-│   │   │
-│   │   └── kafka/
-│   │       └── IngredientListConsumer.java
-│   │
+│   │   ├── web/                     # REST controllers, DTOs, mappers
+│   │   └── kafka/                   # Kafka consumers
 │   └── out/                         # Driven adapters (call external systems)
-│       ├── persistence/
-│       │   ├── RecipeJdbcRepository.java
-│       │   ├── entity/              # DB entities (not domain!)
-│       │   │   └── RecipeEntity.java
-│       │   └── mapper/
-│       │       └── RecipePersistenceMapper.java
-│       │
-│       ├── kafka/
-│       │   └── RecipeParseRequestProducer.java
-│       │
-│       ├── redis/
-│       │   └── RecipeCacheAdapter.java
-│       │
-│       └── event/
-│           └── SpringEventPublisher.java
+│       ├── persistence/             # JDBC repos, entities, mappers
+│       ├── kafka/                   # Kafka producers
+│       └── redis/                   # Cache adapters
 │
 └── config/                          # Spring configuration
-    ├── KafkaConfig.java
-    ├── RedisConfig.java
-    └── SecurityConfig.java
 ```
 
 ### DDD Tactical Patterns
