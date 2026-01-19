@@ -1,0 +1,47 @@
+[
+  {
+    "url": "https://www.example.com/recipes/spaghetti-bolognese",
+    "title": "Classic Spaghetti Bolognese",
+    "ingredients": [
+      { "quantity": "500", "unit": "g", "name": "spaghetti" },
+      { "quantity": "400", "unit": "g", "name": "ground beef" },
+      { "quantity": "1", "unit": null, "name": "onion, diced" },
+      { "quantity": "3", "unit": "cloves", "name": "garlic, minced" },
+      { "quantity": "400", "unit": "g", "name": "canned tomatoes" },
+      { "quantity": "2", "unit": "tbsp", "name": "tomato paste" },
+      { "quantity": "1", "unit": "tsp", "name": "dried oregano" },
+      { "quantity": "1", "unit": "tsp", "name": "dried basil" },
+      { "name": "salt and pepper to taste" },
+      { "quantity": "1/2", "unit": "cup", "name": "red wine" },
+      { "name": "fresh parsley for garnish" },
+      { "name": "parmesan cheese for serving" }
+    ]
+  },
+  {
+    "url": "https://www.example.com/recipes/caesar-salad",
+    "title": "Caesar Salad",
+    "ingredients": [
+      { "quantity": "1", "unit": null, "name": "romaine lettuce head" },
+      { "quantity": "1/2", "unit": "cup", "name": "caesar dressing" },
+      { "quantity": "1/4", "unit": "cup", "name": "parmesan cheese, shaved" },
+      { "quantity": "1", "unit": "cup", "name": "croutons" },
+      { "quantity": "2", "unit": null, "name": "anchovy fillets (optional)" },
+      { "name": "freshly ground black pepper" }
+    ]
+  },
+  {
+    "url": "https://www.example.com/recipes/banana-bread",
+    "title": "Moist Banana Bread",
+    "ingredients": [
+      { "quantity": "3", "unit": null, "name": "ripe bananas, mashed" },
+      { "quantity": "1/3", "unit": "cup", "name": "melted butter" },
+      { "quantity": "3/4", "unit": "cup", "name": "sugar" },
+      { "quantity": "1", "unit": null, "name": "egg, beaten" },
+      { "quantity": "1", "unit": "tsp", "name": "vanilla extract" },
+      { "quantity": "1", "unit": "tsp", "name": "baking soda" },
+      { "name": "pinch of salt" },
+      { "quantity": "1 1/2", "unit": "cups", "name": "all-purpose flour" },
+      { "quantity": "1/2", "unit": "cup", "name": "walnuts, chopped (optional)" }
+    ]
+  }
+]
