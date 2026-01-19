@@ -14,7 +14,7 @@ services:
     networks: [ 'homechef-net' ]
     labels:
       - loki_scope=infra
-    profiles: [ 'ops', 'full' ]
+    profiles: [ 'ops', 'full', 'all' ]
 
   homechef-ops-loki:
     image: grafana/loki:latest
@@ -25,7 +25,7 @@ services:
     networks: [ 'homechef-net' ]
     labels:
       - loki_scope=infra
-    profiles: [ 'ops', 'full' ]
+    profiles: [ 'ops', 'full', 'all' ]
 
   homechef-ops-promtail:
     image: grafana/promtail:latest
@@ -39,7 +39,7 @@ services:
     networks: [ 'homechef-net' ]
     labels:
       - loki_scope=infra
-    profiles: [ 'ops', 'full' ]
+    profiles: [ 'ops', 'full', 'all' ]
 
   homechef-ops-prom-prometheus:
     image: prom/prometheus:latest
@@ -53,7 +53,7 @@ services:
     networks: [ 'homechef-net' ]
     labels:
       - loki_scope=infra
-    profiles: [ 'ops', 'full' ]
+    profiles: [ 'ops', 'full', 'all' ]
 
   homechef-ops-prom-node-exporter:
     image: prom/node-exporter:latest
@@ -72,7 +72,7 @@ services:
     networks: [ 'homechef-net' ]
     labels:
       - loki_scope=infra
-    profiles: [ 'ops', 'full' ]
+    profiles: [ 'ops', 'full', 'all' ]
 
   homechef-log-tester:
     image: alpine:3.20
@@ -90,7 +90,7 @@ services:
     networks: [ 'homechef-net' ]
     labels:
       - loki_scope=infra
-    profiles: [ 'ops', 'full' ]
+    profiles: [ 'ops', 'full', 'all' ]
 
   homechef-datastore-core:
     container_name: homechef-datastore-core
@@ -113,7 +113,7 @@ services:
       - "5432:5432"
     labels:
       - loki_scope=app
-    profiles: [ 'db', 'full', 'app' ]
+    profiles: [ 'db', 'full', 'app', 'infra', 'all' ]
 
   homechef-datastore-core-exporter:
     container_name: homechef-datastore-core-exporter
@@ -129,7 +129,7 @@ services:
     depends_on:
       homechef-datastore-core:
         condition: service_healthy
-    profiles: [ 'db', 'full', 'app' ]
+    profiles: [ 'db', 'full', 'app', 'infra', 'all' ]
 
   homechef-cache-core:
     container_name: homechef-cache-core
@@ -145,7 +145,7 @@ services:
     networks: [ 'homechef-net' ]
     labels:
       - loki_scope=app
-    profiles: [ 'db', 'full', 'app' ]
+    profiles: [ 'db', 'full', 'app', 'infra', 'all' ]
 
   homechef-cache-core-exporter:
     container_name: homechef-cache-core-exporter
@@ -161,7 +161,129 @@ services:
     depends_on:
       homechef-cache-core:
         condition: service_healthy
-    profiles: [ 'db', 'full', 'app' ]
+    profiles: [ 'db', 'full', 'app', 'infra', 'all' ]
+
+  # ============================================
+  # KAFKA (Message Broker)
+  # ============================================
+  homechef-kafka:
+    container_name: homechef-kafka
+    image: apache/kafka:3.7.0
+    restart: unless-stopped
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,PLAINTEXT_HOST://:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://homechef-kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@homechef-kafka:9093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      CLUSTER_ID: homechef-kafka-cluster-001
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    volumes:
+      - ./data/kafka:/var/lib/kafka/data
+    healthcheck:
+      test: [ "CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 || exit 1" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks: [ 'homechef-net' ]
+    labels:
+      - loki_scope=app
+    profiles: [ 'infra', 'full', 'all' ]
+
+  homechef-kafka-ui:
+    container_name: homechef-kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    restart: unless-stopped
+    environment:
+      KAFKA_CLUSTERS_0_NAME: homechef
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: homechef-kafka:9092
+    ports:
+      - "9094:8080"
+    depends_on:
+      homechef-kafka:
+        condition: service_healthy
+    networks: [ 'homechef-net' ]
+    labels:
+      - loki_scope=infra
+    profiles: [ 'infra', 'full', 'all' ]
+
+  # ============================================
+  # CORE APPLICATION (Java Spring Boot)
+  # ============================================
+  homechef-core:
+    container_name: homechef-core
+    build:
+      context: ../core
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      SPRING_DATASOURCE_URL: jdbc:postgresql://homechef-datastore-core:5432/core
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATA_REDIS_HOST: homechef-cache-core
+      KAFKA_BOOTSTRAP_SERVERS: homechef-kafka:9092
+    ports:
+      - "8000:8000"
+    depends_on:
+      homechef-datastore-core:
+        condition: service_healthy
+      homechef-cache-core:
+        condition: service_healthy
+      homechef-kafka:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD-SHELL", "wget -qO- http://localhost:8000/actuator/health || exit 1" ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    networks: [ 'homechef-net' ]
+    labels:
+      - loki_scope=app
+    profiles: [ 'all' ]
+
+  # Core app with hot-reload (dev mode)
+  homechef-core-dev:
+    container_name: homechef-core-dev
+    build:
+      context: ../core
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      SPRING_DATASOURCE_URL: jdbc:postgresql://homechef-datastore-core:5432/core
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATA_REDIS_HOST: homechef-cache-core
+      KAFKA_BOOTSTRAP_SERVERS: homechef-kafka:9092
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../core/src:/app/src:ro
+      - ../core/pom.xml:/app/pom.xml:ro
+    depends_on:
+      homechef-datastore-core:
+        condition: service_healthy
+      homechef-cache-core:
+        condition: service_healthy
+      homechef-kafka:
+        condition: service_healthy
+    networks: [ 'homechef-net' ]
+    labels:
+      - loki_scope=app
+    profiles: [ 'core' ]
 
 networks:
   homechef-net:
