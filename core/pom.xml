@@ -103,7 +103,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <scope>runtime</scope>
+            <!-- Compile scope needed for PGobject type converter -->
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>

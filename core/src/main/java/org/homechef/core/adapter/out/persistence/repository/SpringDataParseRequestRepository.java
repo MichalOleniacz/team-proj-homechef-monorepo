@@ -6,6 +6,7 @@ import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,4 +28,13 @@ public interface SpringDataParseRequestRepository extends CrudRepository<ParseRe
     @Modifying
     @Query("UPDATE parse_request SET status = :status, error_message = :errorMessage, updated_at = now() WHERE id = :id")
     void updateStatus(@Param("id") UUID id, @Param("status") String status, @Param("errorMessage") String errorMessage);
+
+    /**
+     * Inserts a new parse request (used for assigned IDs to bypass Spring Data JDBC's isNew() logic).
+     */
+    @Modifying
+    @Query("INSERT INTO parse_request (id, user_id, url_hash, status, error_message, created_at, updated_at) VALUES (:id, :userId, :urlHash, :status, :errorMessage, :createdAt, :updatedAt)")
+    void insertParseRequest(@Param("id") UUID id, @Param("userId") UUID userId, @Param("urlHash") String urlHash,
+                            @Param("status") String status, @Param("errorMessage") String errorMessage,
+                            @Param("createdAt") Instant createdAt, @Param("updatedAt") Instant updatedAt);
 }

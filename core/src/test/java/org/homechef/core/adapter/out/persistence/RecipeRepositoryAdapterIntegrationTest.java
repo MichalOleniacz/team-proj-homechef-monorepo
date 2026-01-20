@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -24,7 +24,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("RecipeRepositoryAdapter Integration")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class RecipeRepositoryAdapterIntegrationTest extends IntegrationTestBase {
 
     @Autowired
@@ -185,12 +184,13 @@ class RecipeRepositoryAdapterIntegrationTest extends IntegrationTestBase {
             UrlHash urlHash = resource.getUrlHash();
 
             // Insert stale recipe (parsed 60 days ago)
+            Instant staleTime = Instant.now().minus(Duration.ofDays(60));
             jdbcTemplate.update(
-                "INSERT INTO recipe (url_hash, title, ingredients, parsed_at) VALUES (?, ?, ?::jsonb, ?)",
+                "INSERT INTO recipe (url_hash, title, ingredients, parsed_at) VALUES (?, ?, CAST(? AS JSONB), ?)",
                 urlHash.value(),
                 "Stale Recipe",
                 "[]",
-                Instant.now().minus(Duration.ofDays(60))
+                Timestamp.from(staleTime)
             );
 
             // When
