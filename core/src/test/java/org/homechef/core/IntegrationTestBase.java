@@ -13,7 +13,7 @@ import org.testcontainers.utility.DockerImageName;
  * Uses singleton container pattern: containers are started once per JVM
  * and reused across all tests (including nested classes).
  */
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public abstract class IntegrationTestBase {
 

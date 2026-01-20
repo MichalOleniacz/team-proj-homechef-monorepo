@@ -4,6 +4,7 @@ import io.micrometer.core.annotation.Timed;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.validation.Valid;
+import org.homechef.core.adapter.in.security.AuthenticatedUser;
 import org.homechef.core.adapter.in.web.dto.ParseStatusResponse;
 import org.homechef.core.adapter.in.web.dto.SubmitUrlRequest;
 import org.homechef.core.adapter.in.web.dto.SubmitUrlResponse;
@@ -58,7 +59,7 @@ public class RecipeController {
                     kv("url", request.url()),
                     kv("endpoint", "POST /api/v1/recipes/parse"));
 
-            SubmitUrlCommand command = new SubmitUrlCommand(request.url(), null); // null userId for guest
+            SubmitUrlCommand command = new SubmitUrlCommand(request.url(), AuthenticatedUser.currentUserIdOrNull());
             SubmitUrlResult result = submitUrlUseCase.execute(command);
 
             // Update metrics based on outcome
