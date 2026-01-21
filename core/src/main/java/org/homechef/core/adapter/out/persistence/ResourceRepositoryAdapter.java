@@ -31,8 +31,16 @@ public class ResourceRepositoryAdapter implements ResourceRepository {
     @Override
     public Resource save(Resource resource) {
         ResourceEntity entity = mapper.toEntity(resource);
-        ResourceEntity saved = springDataRepository.save(entity);
-        return mapper.toDomain(saved);
+        boolean exists = springDataRepository.existsById(entity.urlHash());
+        if (exists) {
+            // Update existing - use standard save
+            ResourceEntity saved = springDataRepository.save(entity);
+            return mapper.toDomain(saved);
+        } else {
+            // Insert new resource using custom query (avoids Spring Data JDBC's isNew() issue with assigned IDs)
+            springDataRepository.insertResource(entity.urlHash(), entity.url(), entity.createdAt());
+            return resource;
+        }
     }
 
     @Override

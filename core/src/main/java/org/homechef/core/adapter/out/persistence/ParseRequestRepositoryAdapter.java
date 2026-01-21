@@ -38,8 +38,17 @@ public class ParseRequestRepositoryAdapter implements ParseRequestRepository {
     @Override
     public ParseRequest save(ParseRequest parseRequest) {
         ParseRequestEntity entity = mapper.toEntity(parseRequest);
-        ParseRequestEntity saved = springDataRepository.save(entity);
-        return mapper.toDomain(saved);
+        boolean exists = springDataRepository.existsById(entity.id());
+        if (exists) {
+            // Update existing - use standard save
+            ParseRequestEntity saved = springDataRepository.save(entity);
+            return mapper.toDomain(saved);
+        } else {
+            // Insert new parse request using custom query (avoids Spring Data JDBC's isNew() issue with assigned IDs)
+            springDataRepository.insertParseRequest(entity.id(), entity.userId(), entity.urlHash(),
+                    entity.status(), entity.errorMessage(), entity.createdAt(), entity.updatedAt());
+            return parseRequest;
+        }
     }
 
     @Override

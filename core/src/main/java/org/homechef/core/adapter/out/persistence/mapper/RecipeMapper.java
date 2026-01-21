@@ -1,14 +1,14 @@
 package org.homechef.core.adapter.out.persistence.mapper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.homechef.core.adapter.out.persistence.entity.RecipeEntity;
 import org.homechef.core.domain.recipe.Ingredient;
 import org.homechef.core.domain.recipe.Recipe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
 
@@ -18,10 +18,10 @@ public class RecipeMapper {
     private static final Logger log = LoggerFactory.getLogger(RecipeMapper.class);
     private static final TypeReference<List<IngredientJson>> INGREDIENT_LIST_TYPE = new TypeReference<>() {};
 
-    private final ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
 
-    public RecipeMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
+    public RecipeMapper(JsonMapper jsonMapper) {
+        this.jsonMapper = jsonMapper;
     }
 
     public RecipeEntity toEntity(Recipe domain) {
@@ -49,8 +49,8 @@ public class RecipeMapper {
             List<IngredientJson> jsonList = ingredients.stream()
                     .map(i -> new IngredientJson(i.quantity(), i.unit(), i.name()))
                     .toList();
-            return objectMapper.writeValueAsString(jsonList);
-        } catch (JsonProcessingException e) {
+            return jsonMapper.writeValueAsString(jsonList);
+        } catch (DatabindException e) {
             log.error("Failed to serialize ingredients", e);
             return "[]";
         }
@@ -61,11 +61,11 @@ public class RecipeMapper {
             return List.of();
         }
         try {
-            List<IngredientJson> jsonList = objectMapper.readValue(json, INGREDIENT_LIST_TYPE);
+            List<IngredientJson> jsonList = jsonMapper.readValue(json, INGREDIENT_LIST_TYPE);
             return jsonList.stream()
                     .map(j -> Ingredient.of(j.quantity(), j.unit(), j.name()))
                     .toList();
-        } catch (JsonProcessingException e) {
+        } catch (DatabindException e) {
             log.error("Failed to deserialize ingredients: {}", json, e);
             return List.of();
         }

@@ -41,7 +41,16 @@ public class RecipeRepositoryAdapter implements RecipeRepository {
     @Override
     public Recipe save(Recipe recipe) {
         RecipeEntity entity = mapper.toEntity(recipe);
-        RecipeEntity saved = springDataRepository.save(entity);
-        return mapper.toDomain(saved);
+        boolean exists = springDataRepository.existsById(entity.urlHash());
+        if (exists) {
+            // Update existing recipe
+            springDataRepository.updateRecipe(entity.urlHash(), entity.title(),
+                    entity.ingredients(), entity.parsedAt());
+        } else {
+            // Insert new recipe using custom query (avoids Spring Data JDBC's isNew() issue with assigned IDs)
+            springDataRepository.insertRecipe(entity.urlHash(), entity.title(),
+                    entity.ingredients(), entity.parsedAt());
+        }
+        return recipe;
     }
 }
