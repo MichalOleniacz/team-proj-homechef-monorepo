@@ -1,0 +1,58 @@
+{
+  "nav": {
+    "home": "Start",
+    "how": "Jak to działa",
+    "about": "O nas",
+    "contact": "Kontakt"
+  },
+  "hero": {
+    "title": "Wklej link i dostań czytelny przepis",
+    "subtitle": "Home Chef wyciąga składniki i kroki z filmów lub stron — bez zbędnego gadania.",
+    "placeholder": "Wklej link do filmu lub strony z przepisem…",
+    "button": "Pobierz przepis",
+    "hint": "Na razie to mock — backend AI podepniesz później."
+  },
+  "recipe": {
+    "title": "Spaghetti Napoli",
+    "meta": "30 min • 2 porcje",
+    "ingredients": "Składniki",
+    "steps": "Kroki",
+    "copy": "Kopiuj",
+    "copied": "Skopiowano!"
+  },
+  "how": {
+    "title": "Jak to działa",
+    "step1_title": "1) Wklejasz link",
+    "step1_text": "Może to być film (YouTube/TikTok) albo strona z przepisem.",
+    "step2_title": "2) AI analizuje treść",
+    "step2_text": "Wyciąga składniki i instrukcje, usuwa śmieci i reklamy.",
+    "step3_title": "3) Masz przepis do gotowania",
+    "step3_text": "Czytelna lista składników i kroki — gotowe do użycia."
+  },
+  "about": {
+    "title": "O Home Chef",
+    "text": "Home Chef powstał, bo klasyczne strony z przepisami są przeładowane treściami. Chcemy dać Ci prosty, czysty przepis — tak szybko jak się da."
+  },
+  "contact": {
+    "title": "Kontakt",
+    "text": "Masz pomysł, bug albo chcesz pogadać o integracji AI?",
+    "emailLabel": "Email",
+    "messageLabel": "Wiadomość",
+    "send": "Wyślij",
+    "note": "To frontend demo — formularz nie wysyła wiadomości."
+  },
+  "ui": {
+    "theme": "Motyw",
+    "dark": "Ciemny",
+    "light": "Jasny"
+  },
+  "api": {
+    "loading": "Przetwarzam…",
+    "noSignup": "Bez rejestracji • Za darmo do wypróbowania",
+    "emptyUrl": "Wklej link.",
+    "invalidUrl": "To nie wygląda jak poprawny URL (http/https).",
+    "genericError": "Nie udało się pobrać przepisu. Spróbuj ponownie.",
+    "resultHintTitle": "Pobierz przepis →",
+    "resultHintText": "Wklej dowolny link i kliknij przycisk — tu wyświetlimy wynik z backendu."
+  }
+}
