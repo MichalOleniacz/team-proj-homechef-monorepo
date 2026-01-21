@@ -110,7 +110,7 @@ services:
       retries: 3
     networks: [ 'homechef-net' ]
     ports:
-      - "5432:5432"
+      - "5433:5432"
     labels:
       - loki_scope=app
     profiles: [ 'db', 'full', 'app', 'infra', 'all' ]
@@ -141,7 +141,7 @@ services:
       timeout: 5s
       retries: 3
     ports:
-      - "6379:6379"
+      - "6380:6379"
     networks: [ 'homechef-net' ]
     labels:
       - loki_scope=app
