@@ -33,4 +33,4 @@ CREATE TABLE ParsedIngredientList (
       FOREIGN KEY(REQUEST_ID)
       REFERENCES IngredientRequest(ID)
       ON DELETE CASCADE
-};
+);
