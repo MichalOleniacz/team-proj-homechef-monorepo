@@ -1,4 +1,4 @@
-import type { RecipeResponseDto } from "../types/api";
+import type { RecipeResponseDto } from "../types/recipe.ts";
 
 export const mockRecipeResponse: RecipeResponseDto = {
     url: "https://www.example.com/recipes/spaghetti-bolognese",

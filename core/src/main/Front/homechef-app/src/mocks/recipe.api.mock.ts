@@ -1,4 +1,4 @@
-import type { SubmitUrlRequest, RecipeResponseDto } from "../types/api";
+import type { SubmitUrlRequest, RecipeResponseDto } from "../types/recipe.ts";
 import { mockRecipeResponse } from "./recipe.mock";
 
 export function submitUrlMock(

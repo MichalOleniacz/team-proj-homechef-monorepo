@@ -13,12 +13,10 @@
     "hint": "Na razie to mock — backend AI podepniesz później."
   },
   "recipe": {
-    "title": "Spaghetti Napoli",
-    "meta": "30 min • 2 porcje",
     "ingredients": "Składniki",
-    "steps": "Kroki",
     "copy": "Kopiuj",
-    "copied": "Skopiowano!"
+    "copied": "Skopiowano!",
+    "loading": "Analizuję składniki…"
   },
   "how": {
     "title": "Jak to działa",
@@ -51,7 +49,12 @@
     "noSignup": "Bez rejestracji • Za darmo do wypróbowania",
     "emptyUrl": "Wklej link.",
     "invalidUrl": "To nie wygląda jak poprawny URL (http/https).",
-    "genericError": "Nie udało się pobrać przepisu. Spróbuj ponownie."
+    "genericError": "Nie udało się pobrać przepisu. Spróbuj ponownie.",
+    "pending": "Oczekuję w kolejce…",
+    "processing": "Przetwarzam przepis…",
+    "pendingHint": "To może potrwać chwilę. Gdy przepis będzie gotowy, pojawi się tutaj automatycznie.",
+    "failed": "Nie udało się wygenerować przepisu.",
+    "reset": "Wyczyść"
   },
   "auth": {
     "open": "Zaloguj",

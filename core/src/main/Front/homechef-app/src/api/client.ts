@@ -20,7 +20,7 @@ async function safeReadJson(res: Response) {
     }
 }
 
-export const AUTH_MODE: "cookie" | "bearer" = "cookie";
+export const AUTH_MODE: "cookie" | "bearer" = "bearer";
 
 export function getStoredToken() {
     return localStorage.getItem("access_token");
@@ -44,6 +44,12 @@ export async function apiFetch<TResponse>(
         const token = getStoredToken();
         if (token) headers["Authorization"] = `Bearer ${token}`;
     }
+
+    console.log("[apiFetch]", input);
+    console.log("[apiFetch] AUTH_MODE:", AUTH_MODE);
+    console.log("[apiFetch] token:", getStoredToken());
+    console.log("[apiFetch] headers:", headers);
+
 
     const res = await fetch(input, {
         ...init,

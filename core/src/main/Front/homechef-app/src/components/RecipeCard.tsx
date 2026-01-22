@@ -1,42 +1,47 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { RecipeResponseDto } from "../types/api";
+import type { IngredientResponse, RecipeResponse } from "../types/recipe";
 
-function formatIngredient(i: { quantity?: string; unit?: string | null; name: string }) {
+/**
+ * Formats a single ingredient line
+ */
+function formatIngredient(i: IngredientResponse) {
     const q = i.quantity?.trim();
     const u = i.unit?.trim();
-    if (q && u) return `${q} ${u} ${i.name}`;
-    if (q) return `${q} ${i.name}`;
-    return i.name;
+    const name = i.name?.trim();
+
+    if (q && u) return `${q} ${u} ${name}`;
+    if (q) return `${q} ${name}`;
+    return name;
 }
 
-export default function RecipeCard({ recipe }: { recipe: RecipeResponseDto }) {
+type Props = {
+    recipe: RecipeResponse;
+};
+
+export default function RecipeCard({ recipe }: Props) {
     const { t } = useTranslation();
     const [copied, setCopied] = useState(false);
 
-    const ingredientsLines = useMemo(
-        () => recipe.ingredients.map((x) => `- ${formatIngredient(x)}`).join("\n"),
-        [recipe.ingredients]
-    );
+    /**
+     * SAFETY:
+     * ingredients MAY be undefined if backend is still processing
+     */
+    const ingredients = recipe.ingredients ?? [];
 
-    const instructionsLines = useMemo(() => {
-        const ins = recipe.instructions ?? [];
-        if (!ins.length) return "";
-        return ins.map((x, idx) => `${idx + 1}. ${x}`).join("\n");
-    }, [recipe.instructions]);
+    const ingredientsLines = useMemo(() => {
+        if (!ingredients.length) return "";
+        return ingredients.map((x) => `- ${formatIngredient(x)}`).join("\n");
+    }, [ingredients]);
 
     const textToCopy = useMemo(() => {
         const parts = [
             recipe.title,
-            recipe.url ? `Source: ${recipe.url}` : "",
             "",
             `${t("recipe.ingredients")}:\n${ingredientsLines}`,
         ];
-        if (instructionsLines) {
-            parts.push("", `${t("recipe.steps")}:\n${instructionsLines}`);
-        }
-        return parts.filter(Boolean).join("\n");
-    }, [recipe.title, recipe.url, t, ingredientsLines, instructionsLines]);
+        return parts.join("\n");
+    }, [recipe.title, t, ingredientsLines]);
 
     const onCopy = async () => {
         try {
@@ -44,7 +49,7 @@ export default function RecipeCard({ recipe }: { recipe: RecipeResponseDto }) {
             setCopied(true);
             window.setTimeout(() => setCopied(false), 1100);
         } catch {
-
+            // optional: toast / error message
         }
     };
 
@@ -58,52 +63,54 @@ export default function RecipeCard({ recipe }: { recipe: RecipeResponseDto }) {
                 borderRadius: "var(--radius-card)",
             }}
         >
+            {/* Header */}
             <div className="flex items-start justify-between gap-4">
-                <div>
+                <div className="min-w-0">
                     <div className="text-lg font-semibold">{recipe.title}</div>
-                    <div className="text-xs opacity-70 break-all">{recipe.url}</div>
+
+                    {/* Technical ID (optional) */}
+                    <div className="text-xs opacity-70 break-all">
+                        {recipe.urlHash}
+                    </div>
                 </div>
 
                 <button
                     onClick={onCopy}
-                    className="rounded-xl border px-3 py-2 text-sm transition hover:opacity-90"
-                    style={{ borderColor: "var(--color-border)", background: "var(--color-surface)" }}
+                    disabled={!ingredients.length}
+                    className="shrink-0 rounded-xl border px-3 py-2 text-sm transition hover:opacity-90 disabled:opacity-50"
+                    style={{
+                        borderColor: "var(--color-border)",
+                        background: "var(--color-surface)",
+                    }}
                 >
                     {copied ? t("recipe.copied") : t("recipe.copy")}
                 </button>
             </div>
 
+            {/* Ingredients */}
             <div className="mt-5">
-                <div className="text-left text-sm font-semibold mb-2">{t("recipe.ingredients")}</div>
-                <ul className="space-y-2 text-sm">
-                    {recipe.ingredients.map((x, i) => (
-                        <li key={i} className="flex gap-2">
-                            <span className="mt-1">•</span>
-                            <span className="opacity-90">{formatIngredient(x)}</span>
-                        </li>
-                    ))}
-                </ul>
+                <div className="text-left text-sm font-semibold mb-2">
+                    {t("recipe.ingredients")}
+                </div>
 
-                {!!recipe.instructions?.length && (
-                    <>
-                        <div className="mt-5 text-sm font-semibold mb-2">{t("recipe.steps")}</div>
-                        <ol className="space-y-2 text-sm">
-                            {recipe.instructions.map((x, i) => (
-                                <li key={i} className="flex gap-3">
-                  <span
-                      className="inline-flex h-6 w-6 items-center justify-center rounded-lg text-xs font-semibold"
-                      style={{
-                          background: "var(--color-bg)",
-                          border: "1px solid var(--color-border)",
-                      }}
-                  >
-                    {i + 1}
-                  </span>
-                                    <span className="opacity-90">{x}</span>
-                                </li>
-                            ))}
-                        </ol>
-                    </>
+                {ingredients.length === 0 ? (
+                    <div className="text-sm opacity-70">
+                        {t("recipe.loading")}
+                    </div>
+                ) : (
+                    <ul className="space-y-2 text-sm">
+                        {ingredients.map((x) => (
+                            <li
+                                key={`${x.quantity ?? ""}|${x.unit ?? ""}|${x.name}`}
+                                className="flex gap-2"
+                            >
+                                <span className="mt-1">•</span>
+                                <span className="opacity-90">
+                  {formatIngredient(x)}
+                </span>
+                            </li>
+                        ))}
+                    </ul>
                 )}
             </div>
         </div>

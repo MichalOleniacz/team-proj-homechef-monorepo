@@ -1,83 +1,53 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import type { AuthUser, LoginRequest, RegisterRequest } from "../types/auth";
+import { createContext, useContext, useState } from "react";
 import * as authApi from "../api/auth";
-import { ApiError } from "../api/client";
+import type { AuthResponse } from "../types/auth";
 
-type AuthState = {
-    user: AuthUser | null;
-    loading: boolean;
+type AuthContextType = {
+    user: AuthResponse | null;
+    login: (data: { email: string; password: string }) => Promise<void>;
+    register: (data: { email: string; password: string }) => Promise<void>;
+    logout: () => void;
     error: string | null;
-    login: (p: LoginRequest) => Promise<void>;
-    register: (p: RegisterRequest) => Promise<void>;
-    logout: () => Promise<void>;
-    refreshMe: () => Promise<void>;
 };
 
-const AuthContext = createContext<AuthState | null>(null);
+const AuthContext = createContext<AuthContextType>(null!);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<AuthUser | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState<AuthResponse | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    const refreshMe = async () => {
+    const login = async (data: { email: string; password: string }) => {
         setError(null);
         try {
-            const res = await authApi.me();
-            setUser(res.user ?? null);
-        } catch (e) {
-            setUser(null);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        refreshMe();
-    }, []);
-
-    const login = async (p: LoginRequest) => {
-        setError(null);
-        try {
-            const res = await authApi.login(p);
-            if (res.user) setUser(res.user);
-            else await refreshMe();
+            const res = await authApi.login(data);
+            setUser(res);
         } catch (e: any) {
-            const msg = e instanceof ApiError ? e.message : "Login failed";
-            setError(msg);
+            setError(e.message ?? "Login failed");
             throw e;
         }
     };
 
-    const register = async (p: RegisterRequest) => {
+    const register = async (data: { email: string; password: string }) => {
         setError(null);
         try {
-            const res = await authApi.register(p);
-            if (res.user) setUser(res.user);
-            else await refreshMe();
+            const res = await authApi.register(data);
+            setUser(res);
         } catch (e: any) {
-            const msg = e instanceof ApiError ? e.message : "Register failed";
-            setError(msg);
+            setError(e.message ?? "Register failed");
             throw e;
         }
     };
 
-    const logout = async () => {
-        setError(null);
-        await authApi.logout();
+    const logout = () => {
+        authApi.logout();
         setUser(null);
     };
 
-    const value = useMemo(
-        () => ({ user, loading, error, login, register, logout, refreshMe }),
-        [user, loading, error]
+    return (
+        <AuthContext.Provider value={{ user, login, register, logout, error }}>
+            {children}
+        </AuthContext.Provider>
     );
-
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth() {
-    const ctx = useContext(AuthContext);
-    if (!ctx) throw new Error("useAuth must be used within AuthProvider");
-    return ctx;
-}
+export const useAuth = () => useContext(AuthContext);

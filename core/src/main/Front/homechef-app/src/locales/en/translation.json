@@ -13,12 +13,10 @@
     "hint": "This is a mock for now — you’ll plug in the AI backend later."
   },
   "recipe": {
-    "title": "Spaghetti Napoli",
-    "meta": "30 min • 2 servings",
     "ingredients": "Ingredients",
-    "steps": "Steps",
     "copy": "Copy",
-    "copied": "Copied!"
+    "copied": "Copied!",
+    "loading": "Analyzing ingredients…"
   },
   "how": {
     "title": "How it works",
@@ -51,7 +49,12 @@
     "noSignup": "No signup required • Free to try",
     "emptyUrl": "Paste a link.",
     "invalidUrl": "This doesn’t look like a valid URL (http/https).",
-    "genericError": "Could not fetch the recipe. Please try again."
+    "genericError": "Could not fetch the recipe. Please try again.",
+    "pending": "Queued…",
+    "processing": "Processing recipe…",
+    "pendingHint": "This may take a moment. Once ready, the recipe will appear here automatically.",
+    "failed": "Failed to generate recipe.",
+    "reset": "Reset"
   },
   "auth": {
     "open": "Sign in",

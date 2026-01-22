@@ -1,9 +1,9 @@
 import { useState } from "react";
-import type { RecipeResponseDto } from "../types/api";
-import { submitUrl } from "../api/recipes";
+import type { SubmitUrlResponse } from "../types/recipe";
+import { parseRecipe } from "../api/recipes";
 
 export function useSubmitUrl() {
-    const [data, setData] = useState<RecipeResponseDto | null>(null);
+    const [data, setData] = useState<SubmitUrlResponse | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -11,14 +11,11 @@ export function useSubmitUrl() {
         setLoading(true);
         setError(null);
         try {
-            const res = await submitUrl({ url });
+            const res = await parseRecipe({ url });
             setData(res);
             return res;
         } catch (e: any) {
-            const msg =
-                (e?.name === "ApiError" && e?.message) ||
-                null;
-            setError(msg);
+            setError(e?.message ?? "Request failed");
             setData(null);
             throw e;
         } finally {
