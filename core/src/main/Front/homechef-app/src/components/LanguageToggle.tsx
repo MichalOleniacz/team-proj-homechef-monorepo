@@ -17,32 +17,30 @@ export default function LanguageToggle() {
     return (
         <div className="flex items-center gap-2 whitespace-nowrap">
             <div
-                className="inline-flex rounded-full border px-1 py-1"
+                className="toggle-wrap inline-flex rounded-full border px-1 py-1"
                 style={{
                     borderColor: "var(--color-border)",
                     background: "var(--color-surface-strong)",
                     boxShadow: "var(--shadow-soft)",
                 }}
             >
+                <span
+                    className={`toggle-indicator ${lang === "en" ? "is-right" : ""}`}
+                    aria-hidden="true"
+                />
+
                 <button
                     onClick={() => setLang("pl")}
-                    className={`px-3 py-1 text-sm rounded-full transition ${
-                        lang === "pl" ? "font-semibold" : "opacity-70 hover:opacity-100"
-                    }`}
-                    style={{
-                        background: lang === "pl" ? "var(--color-surface)" : "transparent",
-                    }}
+                    className={`toggle-btn px-3 py-1 text-sm rounded-full transition
+            ${lang === "pl" ? "font-semibold" : "opacity-70 hover:opacity-100"}`}
                 >
                     PL
                 </button>
+
                 <button
                     onClick={() => setLang("en")}
-                    className={`px-3 py-1 text-sm rounded-full transition ${
-                        lang === "en" ? "font-semibold" : "opacity-70 hover:opacity-100"
-                    }`}
-                    style={{
-                        background: lang === "en" ? "var(--color-surface)" : "transparent",
-                    }}
+                    className={`toggle-btn px-3 py-1 text-sm rounded-full transition
+            ${lang === "en" ? "font-semibold" : "opacity-70 hover:opacity-100"}`}
                 >
                     EN
                 </button>

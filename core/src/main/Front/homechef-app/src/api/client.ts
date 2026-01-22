@@ -20,16 +20,35 @@ async function safeReadJson(res: Response) {
     }
 }
 
+export const AUTH_MODE: "cookie" | "bearer" = "cookie";
+
+export function getStoredToken() {
+    return localStorage.getItem("access_token");
+}
+
+export function setStoredToken(token: string | null) {
+    if (!token) localStorage.removeItem("access_token");
+    else localStorage.setItem("access_token", token);
+}
+
 export async function apiFetch<TResponse>(
     input: RequestInfo | URL,
     init?: RequestInit
 ): Promise<TResponse> {
+    const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+        ...(init?.headers as any),
+    };
+
+    if (AUTH_MODE === "bearer") {
+        const token = getStoredToken();
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+    }
+
     const res = await fetch(input, {
         ...init,
-        headers: {
-            "Content-Type": "application/json",
-            ...(init?.headers ?? {}),
-        },
+        headers,
+        credentials: "include",
     });
 
     if (!res.ok) {

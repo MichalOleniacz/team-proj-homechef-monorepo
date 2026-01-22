@@ -51,8 +51,26 @@
     "noSignup": "No signup required • Free to try",
     "emptyUrl": "Paste a link.",
     "invalidUrl": "This doesn’t look like a valid URL (http/https).",
-    "genericError": "Could not fetch the recipe. Please try again.",
-    "resultHintTitle": "Get recipe →",
-    "resultHintText": "Paste any link and click the button — we’ll show the backend result here."
+    "genericError": "Could not fetch the recipe. Please try again."
+  },
+  "auth": {
+    "open": "Sign in",
+    "logout": "Log out",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "loginTab": "Sign in",
+    "registerTab": "Sign up",
+    "titleLogin": "Sign in",
+    "titleRegister": "Create an account",
+    "submitLogin": "Sign in",
+    "submitRegister": "Create account",
+    "submitting": "Please wait…",
+    "errors": {
+      "emailRequired": "Email is required.",
+      "passwordRequired": "Password is required.",
+      "passwordMin": "Password must be at least 6 characters.",
+      "passwordsMismatch": "Passwords do not match."
+    }
   }
 }

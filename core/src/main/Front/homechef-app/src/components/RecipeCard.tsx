@@ -74,7 +74,7 @@ export default function RecipeCard({ recipe }: { recipe: RecipeResponseDto }) {
             </div>
 
             <div className="mt-5">
-                <div className="text-sm font-semibold mb-2">{t("recipe.ingredients")}</div>
+                <div className="text-left text-sm font-semibold mb-2">{t("recipe.ingredients")}</div>
                 <ul className="space-y-2 text-sm">
                     {recipe.ingredients.map((x, i) => (
                         <li key={i} className="flex gap-2">

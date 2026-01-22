@@ -1,0 +1,26 @@
+import { useEffect, useRef, useState } from "react";
+
+export function useInView<T extends HTMLElement>(options?: IntersectionObserverInit) {
+    const ref = useRef<T | null>(null);
+    const [inView, setInView] = useState(false);
+
+    useEffect(() => {
+        const el = ref.current;
+        if (!el) return;
+
+        const obs = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setInView(true);
+                    obs.disconnect(); // animuj tylko raz (jak chcesz wielokrotnie, usuń to)
+                }
+            },
+            { threshold: 0.15, ...options }
+        );
+
+        obs.observe(el);
+        return () => obs.disconnect();
+    }, [options]);
+
+    return { ref, inView };
+}

@@ -9,9 +9,10 @@ export default function ThemeToggle({ compact = false }: { compact?: boolean }) 
         <button
             onClick={toggle}
             className={[
-                "inline-flex items-center gap-2 rounded-full border px-3 py-2 text-sm transition hover:opacity-90",
-                "whitespace-nowrap",
-                compact ? "" : "",
+                "theme-btn inline-flex items-center gap-2 rounded-full border text-sm",
+                "whitespace-nowrap transition",
+                "hover:-translate-y-[1px] active:translate-y-0",
+                compact ? "px-3 py-2" : "px-4 py-2",
             ].join(" ")}
             style={{
                 borderColor: "var(--color-border)",

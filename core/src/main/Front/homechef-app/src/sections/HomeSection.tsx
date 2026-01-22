@@ -101,19 +101,8 @@ export default function HomeSection() {
                                     <RecipeCard recipe={data} />
                                 </div>
                             ) : (
-                                <div
-                                    className="mx-auto max-w-xl rounded-2xl border p-6 text-left pop-in"
-                                    style={{
-                                        background: "var(--color-surface-strong)",
-                                        borderColor: "var(--color-border)",
-                                        boxShadow: "var(--shadow-soft)",
-                                        borderRadius: "var(--radius-card)",
-                                    }}
-                                >
-                                    <div className="text-sm font-semibold mb-2">
-                                        {t("api.resultHintTitle")} {t("recipe.title")}
-                                    </div>
-                                    <div className="text-sm opacity-70">{t("api.resultHintText")}</div>
+                                <div>
+
                                 </div>
                             )}
                         </div>

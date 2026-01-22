@@ -51,8 +51,26 @@
     "noSignup": "Bez rejestracji • Za darmo do wypróbowania",
     "emptyUrl": "Wklej link.",
     "invalidUrl": "To nie wygląda jak poprawny URL (http/https).",
-    "genericError": "Nie udało się pobrać przepisu. Spróbuj ponownie.",
-    "resultHintTitle": "Pobierz przepis →",
-    "resultHintText": "Wklej dowolny link i kliknij przycisk — tu wyświetlimy wynik z backendu."
+    "genericError": "Nie udało się pobrać przepisu. Spróbuj ponownie."
+  },
+  "auth": {
+    "open": "Zaloguj",
+    "logout": "Wyloguj",
+    "email": "Email",
+    "password": "Hasło",
+    "confirmPassword": "Powtórz hasło",
+    "loginTab": "Logowanie",
+    "registerTab": "Rejestracja",
+    "titleLogin": "Zaloguj się",
+    "titleRegister": "Zarejestruj się",
+    "submitLogin": "Zaloguj",
+    "submitRegister": "Utwórz konto",
+    "submitting": "Proszę czekać…",
+    "errors": {
+      "emailRequired": "Email jest wymagany.",
+      "passwordRequired": "Hasło jest wymagane.",
+      "passwordMin": "Hasło musi mieć min. 6 znaków.",
+      "passwordsMismatch": "Hasła nie są takie same."
+    }
   }
 }
