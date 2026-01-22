@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM eclipse-temurin:17-jdk-alpine AS build
+FROM eclipse-temurin:17-jdk AS build
 WORKDIR /app
 
 # Cache Maven dependencies
@@ -12,12 +12,12 @@ COPY src/ src/
 RUN ./mvnw package -DskipTests -B
 
 # Stage 2: Runtime
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre
 WORKDIR /app
 
 # Security: non-root user
-RUN addgroup -g 1001 appgroup && \
-    adduser -u 1001 -G appgroup -D appuser
+RUN groupadd -g 1001 appgroup && \
+    useradd -u 1001 -g appgroup appuser
 
 # Copy JAR from build stage
 COPY --from=build --chown=appuser:appgroup /app/target/*.jar app.jar
