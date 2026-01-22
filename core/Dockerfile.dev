@@ -1,0 +1,25 @@
+FROM eclipse-temurin:17-jdk-alpine
+WORKDIR /app
+
+# Install required tools
+RUN apk add --no-cache wget
+
+# Copy Maven wrapper and dependencies first (for layer caching)
+COPY .mvn/ .mvn/
+COPY mvnw pom.xml ./
+RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
+
+# Copy source code (will be overridden by volume mount in dev)
+COPY src/ src/
+
+EXPOSE 8000
+
+# Enable Spring DevTools remote restart
+# Source is mounted at runtime, so changes trigger restart
+ENV SPRING_DEVTOOLS_RESTART_ENABLED=true
+ENV SPRING_DEVTOOLS_LIVERELOAD_ENABLED=true
+
+# Run with spring-boot:run for dev experience
+# DevTools will detect source changes and restart
+ENTRYPOINT ["./mvnw", "spring-boot:run", \
+    "-Dspring-boot.run.jvmArguments=-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"]

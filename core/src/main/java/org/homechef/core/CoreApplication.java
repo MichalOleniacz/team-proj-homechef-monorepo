@@ -8,9 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication(exclude = ConfigurationPropertiesReportEndpointAutoConfiguration.class)
 public class CoreApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(CoreApplication.class, args);
     }
-
 }
