@@ -234,6 +234,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_DATA_REDIS_HOST: homechef-cache-core
       KAFKA_BOOTSTRAP_SERVERS: homechef-kafka:9092
+      JWT_SECRET: dev-secret-key-minimum-32-characters-for-local-dev
     ports:
       - "8000:8000"
     depends_on:
@@ -268,6 +269,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: postgres
       SPRING_DATA_REDIS_HOST: homechef-cache-core
       KAFKA_BOOTSTRAP_SERVERS: homechef-kafka:9092
+      JWT_SECRET: dev-secret-key-minimum-32-characters-for-local-dev
     ports:
       - "8000:8000"
     volumes:

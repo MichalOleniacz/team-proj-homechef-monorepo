@@ -1,0 +1,79 @@
+{
+  "nav": {
+    "home": "Home",
+    "how": "How it works",
+    "about": "About",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Paste a link, get a clean recipe",
+    "subtitle": "Home Chef extracts ingredients and steps from videos or websites — no clutter.",
+    "placeholder": "Paste a video or recipe page link…",
+    "button": "Get recipe",
+    "hint": "This is a mock for now — you’ll plug in the AI backend later."
+  },
+  "recipe": {
+    "ingredients": "Ingredients",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "loading": "Analyzing ingredients…"
+  },
+  "how": {
+    "title": "How it works",
+    "step1_title": "1) Paste a link",
+    "step1_text": "It can be a video (YouTube/TikTok) or a recipe website.",
+    "step2_title": "2) AI analyzes it",
+    "step2_text": "It extracts ingredients & steps, removes junk and ads.",
+    "step3_title": "3) Cook from the clean recipe",
+    "step3_text": "A tidy ingredients list and steps — ready to use."
+  },
+  "about": {
+    "title": "About Home Chef",
+    "text": "Home Chef exists because most recipe pages are full of noise. We want to give you a simple, clean recipe — as fast as possible."
+  },
+  "contact": {
+    "title": "Contact",
+    "text": "Got an idea, bug report, or want to talk about AI integration?",
+    "emailLabel": "Email",
+    "messageLabel": "Message",
+    "send": "Send",
+    "note": "This is a frontend demo — the form doesn’t send yet."
+  },
+  "ui": {
+    "theme": "Theme",
+    "dark": "Dark",
+    "light": "Light"
+  },
+  "api": {
+    "loading": "Processing…",
+    "noSignup": "No signup required • Free to try",
+    "emptyUrl": "Paste a link.",
+    "invalidUrl": "This doesn’t look like a valid URL (http/https).",
+    "genericError": "Could not fetch the recipe. Please try again.",
+    "pending": "Queued…",
+    "processing": "Processing recipe…",
+    "pendingHint": "This may take a moment. Once ready, the recipe will appear here automatically.",
+    "failed": "Failed to generate recipe.",
+    "reset": "Reset"
+  },
+  "auth": {
+    "open": "Sign in",
+    "logout": "Log out",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "loginTab": "Sign in",
+    "registerTab": "Sign up",
+    "titleLogin": "Sign in",
+    "titleRegister": "Create an account",
+    "submitLogin": "Sign in",
+    "submitRegister": "Create account",
+    "submitting": "Please wait…",
+    "errors": {
+      "emailRequired": "Email is required.",
+      "passwordRequired": "Password is required.",
+      "passwordMin": "Password must be at least 6 characters.",
+      "passwordsMismatch": "Passwords do not match."
+    }
+  }
+}
