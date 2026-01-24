@@ -72,7 +72,7 @@
     "errors": {
       "emailRequired": "Email is required.",
       "passwordRequired": "Password is required.",
-      "passwordMin": "Password must be at least 6 characters.",
+      "passwordMin": "Password must be at least 8 characters.",
       "passwordsMismatch": "Passwords do not match."
     }
   }

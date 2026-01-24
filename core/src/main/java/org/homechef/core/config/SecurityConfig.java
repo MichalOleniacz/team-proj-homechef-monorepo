@@ -47,9 +47,11 @@ public class SecurityConfig {
                         // Public endpoints
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/actuator/health", "/actuator/info").permitAll()
-                        //OpenAPI spec
+                        // OpenAPI spec
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        // API endpoints require authentication
+                        // Recipe endpoints are public (read-only)
+                        .requestMatchers("/api/v1/recipes/**").permitAll()
+                        // Other API endpoints require authentication
                         .requestMatchers("/api/**").authenticated()
                         // Default: permit all other requests (for now)
                         .anyRequest().permitAll()

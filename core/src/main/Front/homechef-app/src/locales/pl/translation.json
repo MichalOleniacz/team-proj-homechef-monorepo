@@ -72,7 +72,7 @@
     "errors": {
       "emailRequired": "Email jest wymagany.",
       "passwordRequired": "Hasło jest wymagane.",
-      "passwordMin": "Hasło musi mieć min. 6 znaków.",
+      "passwordMin": "Hasło musi mieć min. 8 znaków.",
       "passwordsMismatch": "Hasła nie są takie same."
     }
   }

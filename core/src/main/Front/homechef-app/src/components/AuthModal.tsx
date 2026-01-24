@@ -50,7 +50,7 @@ export default function AuthModal({
         if (!pass) return setLocalError(t("auth.errors.passwordRequired"));
 
         if (mode === "register") {
-            if (pass.length < 6) return setLocalError(t("auth.errors.passwordMin"));
+            if (pass.length < 8) return setLocalError(t("auth.errors.passwordMin"));
             if (pass !== pass2) return setLocalError(t("auth.errors.passwordsMismatch"));
         }
 
@@ -59,7 +59,7 @@ export default function AuthModal({
             if (mode === "login") {
                 await login({ email, password: pass });
             } else {
-                await register({ email, password: pass, confirmPassword: pass2 });
+                await register({ email, password: pass });
             }
             close();
         } finally {

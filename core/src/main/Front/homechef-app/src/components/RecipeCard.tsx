@@ -67,11 +67,6 @@ export default function RecipeCard({ recipe }: Props) {
             <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
                     <div className="text-lg font-semibold">{recipe.title}</div>
-
-                    {/* Technical ID (optional) */}
-                    <div className="text-xs opacity-70 break-all">
-                        {recipe.urlHash}
-                    </div>
                 </div>
 
                 <button

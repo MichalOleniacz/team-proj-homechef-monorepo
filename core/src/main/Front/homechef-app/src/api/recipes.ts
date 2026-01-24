@@ -4,7 +4,7 @@ import { mockGetStatus, mockSubmit } from "../mocks/recipes.seed";
 
 const API_BASE = ""; // jeśli używasz vite proxy
 
-const USE_MOCK = (import.meta.env.VITE_USE_MOCK_API ?? "true") === "true";
+const USE_MOCK = import.meta.env.VITE_USE_MOCK_API === "true";
 
 export async function parseRecipe(payload: SubmitUrlRequest): Promise<SubmitUrlResponse> {
     if (USE_MOCK) {
