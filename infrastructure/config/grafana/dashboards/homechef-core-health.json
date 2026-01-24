@@ -1,0 +1,433 @@
+{
+  "id": null,
+  "uid": "homechef-core-health",
+  "title": "HomeChef Core - Health",
+  "tags": ["homechef", "core", "health"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "refresh": "10s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Uptime",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 0, "w": 4, "h": 4 },
+      "targets": [
+        {
+          "expr": "process_uptime_seconds{job=\"homechef-core\"}",
+          "refId": "A"
+        }
+      ],
+      "datasource": { "uid": "ef50vzkc6tn28e", "type": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null }
+            ]
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "value"
+      }
+    },
+    {
+      "id": 2,
+      "title": "CPU Usage",
+      "type": "gauge",
+      "gridPos": { "x": 4, "y": 0, "w": 4, "h": 4 },
+      "targets": [
+        {
+          "expr": "process_cpu_usage{job=\"homechef-core\"} * 100",
+          "refId": "A"
+        }
+      ],
+      "datasource": { "uid": "ef50vzkc6tn28e", "type": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 60 },
+              { "color": "red", "value": 80 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "System CPU",
+      "type": "gauge",
+      "gridPos": { "x": 8, "y": 0, "w": 4, "h": 4 },
+      "targets": [
+        {
+          "expr": "system_cpu_usage{job=\"homechef-core\"} * 100",
+          "refId": "A"
+        }
+      ],
+      "datasource": { "uid": "ef50vzkc6tn28e", "type": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 60 },
+              { "color": "red", "value": 80 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "JVM Threads",
+      "type": "stat",
+      "gridPos": { "x": 12, "y": 0, "w": 4, "h": 4 },
+      "targets": [
+        {
+          "expr": "jvm_threads_live_threads{job=\"homechef-core\"}",
+          "refId": "A",
+          "legendFormat": "Live"
+        }
+      ],
+      "datasource": { "uid": "ef50vzkc6tn28e", "type": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 100 },
+              { "color": "red", "value": 200 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "Recipes Submitted",
+      "type": "stat",
+      "gridPos": { "x": 16, "y": 0, "w": 4, "h": 4 },
+      "targets": [
+        {
+          "expr": "recipe_submit_total{job=\"homechef-core\"}",
+          "refId": "A"
+        }
+      ],
+      "datasource": { "uid": "ef50vzkc6tn28e", "type": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "blue", "value": null }
+            ]
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "value"
+      }
+    },
+    {
+      "id": 6,
+      "title": "DB Connections",
+      "type": "stat",
+      "gridPos": { "x": 20, "y": 0, "w": 4, "h": 4 },
+      "targets": [
+        {
+          "expr": "hikaricp_connections_active{job=\"homechef-core\"}",
+          "refId": "A",
+          "legendFormat": "Active"
+        }
+      ],
+      "datasource": { "uid": "ef50vzkc6tn28e", "type": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 7 },
+              { "color": "red", "value": 9 }
+            ]
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "value"
+      }
+    },
+    {
+      "id": 7,
+      "title": "HTTP Request Rate",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 4, "w": 12, "h": 6 },
+      "targets": [
+        {
+          "expr": "sum(rate(http_server_requests_seconds_count{job=\"homechef-core\"}[1m])) by (uri)",
+          "refId": "A",
+          "legendFormat": "{{ uri }}"
+        }
+      ],
+      "datasource": { "uid": "ef50vzkc6tn28e", "type": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      }
+    },
+    {
+      "id": 8,
+      "title": "HTTP Avg Latency",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 4, "w": 12, "h": 6 },
+      "targets": [
+        {
+          "expr": "rate(http_server_requests_seconds_sum{job=\"homechef-core\"}[1m]) / rate(http_server_requests_seconds_count{job=\"homechef-core\"}[1m])",
+          "refId": "A",
+          "legendFormat": "{{ uri }}"
+        }
+      ],
+      "datasource": { "uid": "ef50vzkc6tn28e", "type": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      }
+    },
+    {
+      "id": 9,
+      "title": "JVM Heap Memory",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 10, "w": 8, "h": 6 },
+      "targets": [
+        {
+          "expr": "sum(jvm_memory_used_bytes{job=\"homechef-core\", area=\"heap\"})",
+          "refId": "A",
+          "legendFormat": "Used"
+        },
+        {
+          "expr": "sum(jvm_memory_committed_bytes{job=\"homechef-core\", area=\"heap\"})",
+          "refId": "B",
+          "legendFormat": "Committed"
+        },
+        {
+          "expr": "sum(jvm_memory_max_bytes{job=\"homechef-core\", area=\"heap\", id=\"G1 Old Gen\"})",
+          "refId": "C",
+          "legendFormat": "Max"
+        }
+      ],
+      "datasource": { "uid": "ef50vzkc6tn28e", "type": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      }
+    },
+    {
+      "id": 10,
+      "title": "GC Pause Time",
+      "type": "timeseries",
+      "gridPos": { "x": 8, "y": 10, "w": 8, "h": 6 },
+      "targets": [
+        {
+          "expr": "rate(jvm_gc_pause_seconds_sum{job=\"homechef-core\"}[1m])",
+          "refId": "A",
+          "legendFormat": "{{ gc }} - {{ action }}"
+        }
+      ],
+      "datasource": { "uid": "ef50vzkc6tn28e", "type": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      }
+    },
+    {
+      "id": 11,
+      "title": "HikariCP Pool",
+      "type": "timeseries",
+      "gridPos": { "x": 16, "y": 10, "w": 8, "h": 6 },
+      "targets": [
+        {
+          "expr": "hikaricp_connections_active{job=\"homechef-core\"}",
+          "refId": "A",
+          "legendFormat": "Active"
+        },
+        {
+          "expr": "hikaricp_connections_idle{job=\"homechef-core\"}",
+          "refId": "B",
+          "legendFormat": "Idle"
+        },
+        {
+          "expr": "hikaricp_connections_pending{job=\"homechef-core\"}",
+          "refId": "C",
+          "legendFormat": "Pending"
+        }
+      ],
+      "datasource": { "uid": "ef50vzkc6tn28e", "type": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      }
+    },
+    {
+      "id": 12,
+      "title": "Kafka Consumer Lag",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 16, "w": 8, "h": 6 },
+      "targets": [
+        {
+          "expr": "kafka_consumer_fetch_manager_records_lag_max{job=\"homechef-core\"}",
+          "refId": "A",
+          "legendFormat": "{{ topic }}-{{ partition }}"
+        }
+      ],
+      "datasource": { "uid": "ef50vzkc6tn28e", "type": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      }
+    },
+    {
+      "id": 13,
+      "title": "Kafka Messages Consumed",
+      "type": "timeseries",
+      "gridPos": { "x": 8, "y": 16, "w": 8, "h": 6 },
+      "targets": [
+        {
+          "expr": "rate(kafka_consumer_fetch_manager_records_consumed_total{job=\"homechef-core\"}[1m])",
+          "refId": "A",
+          "legendFormat": "{{ topic }}"
+        }
+      ],
+      "datasource": { "uid": "ef50vzkc6tn28e", "type": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      }
+    },
+    {
+      "id": 14,
+      "title": "Redis Latency",
+      "type": "timeseries",
+      "gridPos": { "x": 16, "y": 16, "w": 8, "h": 6 },
+      "targets": [
+        {
+          "expr": "rate(lettuce_seconds_sum{job=\"homechef-core\"}[1m]) / rate(lettuce_seconds_count{job=\"homechef-core\"}[1m])",
+          "refId": "A",
+          "legendFormat": "{{ command }}"
+        }
+      ],
+      "datasource": { "uid": "ef50vzkc6tn28e", "type": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": {
+            "drawStyle": "line",
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      }
+    },
+    {
+      "id": 15,
+      "title": "Logs (Errors & Warnings)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 22, "w": 24, "h": 5 },
+      "targets": [
+        {
+          "expr": "rate(logback_events_total{job=\"homechef-core\", level=\"error\"}[1m])",
+          "refId": "A",
+          "legendFormat": "Errors"
+        },
+        {
+          "expr": "rate(logback_events_total{job=\"homechef-core\", level=\"warn\"}[1m])",
+          "refId": "B",
+          "legendFormat": "Warnings"
+        }
+      ],
+      "datasource": { "uid": "ef50vzkc6tn28e", "type": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "drawStyle": "bars",
+            "lineWidth": 1,
+            "fillOpacity": 80
+          }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Errors" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Warnings" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "yellow", "mode": "fixed" } }]
+          }
+        ]
+      }
+    }
+  ]
+}
