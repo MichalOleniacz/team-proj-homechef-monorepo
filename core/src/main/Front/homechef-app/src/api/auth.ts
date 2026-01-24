@@ -9,8 +9,6 @@ export async function register(payload: RegisterRequest): Promise<AuthResponse> 
         body: JSON.stringify(payload),
     });
 
-    console.log("[auth.register] response:", res);
-
     setStoredToken(res.accessToken);
 
     return res;

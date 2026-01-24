@@ -138,11 +138,12 @@ public class RecipeImporter implements ApplicationRunner {
 
                 // Convert and save recipe
                 List<Ingredient> ingredients = convertIngredients(data.ingredients());
-                Recipe recipe = Recipe.create(resource.getUrlHash(), data.title(), ingredients);
+                String title = resolveTitle(data.title(), data.url());
+                Recipe recipe = Recipe.create(resource.getUrlHash(), title, ingredients);
                 recipeRepository.save(recipe);
 
                 importedCount++;
-                log.info("RecipeImporter: Imported '{}' from {}", data.title(), data.url());
+                log.info("RecipeImporter: Imported '{}' from {}", title, data.url());
 
             } catch (Exception e) {
                 failedCount++;
@@ -210,5 +211,52 @@ public class RecipeImporter implements ApplicationRunner {
         BigDecimal numerator = new BigDecimal(parts[0].trim());
         BigDecimal denominator = new BigDecimal(parts[1].trim());
         return numerator.divide(denominator, 4, java.math.RoundingMode.HALF_UP);
+    }
+
+    /**
+     * Resolves recipe title: uses provided title, or extracts from URL slug.
+     * Example: "https://aniagotuje.pl/przepis/chlebek-bananowy" -> "Chlebek Bananowy"
+     */
+    private String resolveTitle(String title, String url) {
+        if (title != null && !title.isBlank()) {
+            return title;
+        }
+
+        // Extract title from URL slug (last path segment)
+        try {
+            String path = java.net.URI.create(url).getPath();
+            String[] segments = path.split("/");
+            String slug = segments[segments.length - 1];
+
+            // Convert slug to title: "chlebek-bananowy" -> "Chlebek Bananowy"
+            return formatSlugAsTitle(slug);
+        } catch (Exception e) {
+            log.debug("RecipeImporter: Could not extract title from URL: {}", url);
+            return "Untitled Recipe";
+        }
+    }
+
+    private String formatSlugAsTitle(String slug) {
+        if (slug == null || slug.isBlank()) {
+            return "Untitled Recipe";
+        }
+
+        // Replace hyphens/underscores with spaces and capitalize each word
+        String[] words = slug.replace("-", " ").replace("_", " ").split("\\s+");
+        StringBuilder title = new StringBuilder();
+
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                if (title.length() > 0) {
+                    title.append(" ");
+                }
+                title.append(Character.toUpperCase(word.charAt(0)));
+                if (word.length() > 1) {
+                    title.append(word.substring(1).toLowerCase());
+                }
+            }
+        }
+
+        return title.toString();
     }
 }

@@ -45,12 +45,6 @@ export async function apiFetch<TResponse>(
         if (token) headers["Authorization"] = `Bearer ${token}`;
     }
 
-    console.log("[apiFetch]", input);
-    console.log("[apiFetch] AUTH_MODE:", AUTH_MODE);
-    console.log("[apiFetch] token:", getStoredToken());
-    console.log("[apiFetch] headers:", headers);
-
-
     const res = await fetch(input, {
         ...init,
         headers,
